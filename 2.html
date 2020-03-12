@@ -1,16 +1,96 @@
-<!doctype html>
 <html>
-  <head>
+<head>
+<title>Weather</title>
+<!-- 실시간데이터 -->
     <meta charset="utf-8">
-    <title></title>
-    <style type="text/css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+<script>
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else {
+    alert("이 브라우저에서는 Geolocation을 지원하지 않습니다.");
+  }
+}
 
-    </style>
-  </head>
-  <body>
-    <p>연결</p>
-    <script type="text/javascript">
+function showPosition(position) {
+  // x.innerHTML = "위도: " + position.coords.latitude +
+  // "<br>경도: " + position.coords.longitude;
+  var $LatitudeData=position.coords.latitude;
+  var $LongitudeData=position.coords.longitude;
 
-    </script>
-  </body>
+  $.getJSON("http://api.openweathermap.org/data/2.5/weather?APPID=19cf2b4d24f78ab577061da24b4c9a2d&units=metric&lat="+$LatitudeData+'&lon='+$LongitudeData+" ",function(data){
+    //alert(data.list[0].main.temp_min);
+    var $minTemp=data.main.temp_min;
+    var $maxTemp=data.main.temp_max;
+    var $cTemp=data.main.temp;
+    var $now=new Date($.now());
+    var $cDate=$now.getFullYear()+'-'+($now.getMonth()+1)+'-'+$now.getDate()+'/'+$now.getHours()+':'+$now.getMinutes();
+    var $wIcon=data.weather[0].icon;
+    //alert(new Date(Date.now()));
+    // 현재시간 출력 $.now()==Date.now(); new Date(Date.now());
+    //A.append(B) A요소 내용의 뒤에 B를 추가
+    //A.appendTo(B) B요소 내용의 뒤에 A를 추가
+    //A.prepend(B) A요소 내용의 앞에 B를 추가
+    //A.prependTo(B) B요소 내용의 앞에 A를 추가
+
+    $('.clowtemp').append($minTemp);
+    $('.chightemp').append($maxTemp);
+    $('.cTemp').append($cTemp);
+    $('h1').prepend($cDate);
+    $('.cicon').append('<img src="http://openweathermap.org/img/wn/'+ $wIcon +'@2x.png">');
+});
+}
+function showError(error) {
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      alert("사용자가 Geolocation 요청을 거부했습니다.")
+      break;
+    case error.POSITION_UNAVAILABLE:
+      alert("위치 정보를 사용할 수 없습니다.")
+      break;
+    case error.TIMEOUT:
+      alert("사용자 위치를 가져오는 요청이 시간 초과되었습니다.")
+      break;
+    case error.UNKNOWN_ERROR:
+      alert("알 수 없는 오류가 발생했습니다.")
+      break;
+  }
+}
+// $.getJSON('파일경로',function(data){~~~~data로 할일~~~~});
+//   $.getJSON("http://api.openweathermap.org/data/2.5/weather?APPID=19cf2b4d24f78ab577061da24b4c9a2d&units=metric&lat="+$LatitudeData+'&lon='+$LongitudeData+" ",function(data){
+//     //alert(data.list[0].main.temp_min);
+//     var $minTemp=data.main.temp_min;
+//     var $maxTemp=data.main.temp_max;
+//     var $cTemp=data.main.temp;
+//     var $now=new Date($.now());
+//     var $cDate=$now.getFullYear()+'-'+($now.getMonth()+1)+'-'+$now.getDate()+'/'+$now.getHours()+':'+$now.getMinutes();
+//     var $wIcon=data.weather[0].icon;
+//     //alert(new Date(Date.now()));
+//     // 현재시간 출력 $.now()==Date.now(); new Date(Date.now());
+//     //A.append(B) A요소 내용의 뒤에 B를 추가
+//     //A.appendTo(B) B요소 내용의 뒤에 A를 추가
+//     //A.prepend(B) A요소 내용의 앞에 B를 추가
+//     //A.prependTo(B) B요소 내용의 앞에 A를 추가
+//
+//     $('.clowtemp').append($minTemp);
+//     $('.chightemp').append($maxTemp);
+//     $('.cTemp').append($cTemp);
+//     $('h1').prepend($cDate);
+//     $('.cicon').append('<img src="http://openweathermap.org/img/wn/'+ $wIcon +'@2x.png">');
+// });
+</script>
+<body>
+
+  <button onclick="getLocation()">현위치 찾기</button>
+<h1>- weather api</h1>
+<div class="ctemp">현재 온도: </div>
+<div class="clowtemp">최저 온도: </div>
+<div class="chightemp">최고 온도: </div>
+<div class="cicon">아이콘 : </div>
+<i class="wi wi-owm-201"></i>
+<!-- HTML -->
+</body>
 </html>
+
